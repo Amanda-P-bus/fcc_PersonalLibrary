@@ -49,7 +49,8 @@ mongoose.connect(URI).then(() => {
     setTimeout(function () {
       try {
         runner.run();
-      } catch(e) {
+      } 
+      catch(e) {
           console.log('Tests are not valid:');
           console.error(e);
       }

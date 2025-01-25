@@ -22,14 +22,6 @@ module.exports = function (app) {
       try {    
         //const showAll = await Book.find({}, 
           
-         let getRes = (results ) => results.forEach((result) => {
-            let book = result.toJSON()
-            book["commentcount"] = book.comments.length
-            allBooks.push(book)
-          }) 
-
-          const showAll = await Book.find(getRes)
-          res.json(allBooks);
          }
       
          catch (e) {
@@ -47,7 +39,6 @@ module.exports = function (app) {
      try { 
       let newBook = new Book({
         title: req.body.title,
-        comments: []
       }) 
  
       const addBook = await newBook.save();
@@ -58,7 +49,8 @@ module.exports = function (app) {
       res.status(500).json({message: e.message});  }  
       //response will contain new book object including at least _id and title
     }))
-    
+
+    //delete all books
     .delete(function(req, res){
       //if successful response will be 'complete delete successful'
     });
@@ -66,17 +58,27 @@ module.exports = function (app) {
 
 
   app.route('/api/books/:id')
+  //get one book
     .get(function (req, res){
       let bookid = req.params.id;
       //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
     })
-    
+
+    //add comment function
     .post(function(req, res){
       let bookid = req.params.id;
       let comment = req.body.comment;
+
+      /*await MyModel.updateOne(
+        { _id: myDoc._id }, 
+        { $push: { comments: 'another string' } });
+
+      */
+
       //json res format same as .get
     })
-    
+
+    //delete one book
     .delete(function(req, res){
       let bookid = req.params.id;
       //if successful response will be 'delete successful'
