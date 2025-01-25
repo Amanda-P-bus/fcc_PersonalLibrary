@@ -75,7 +75,7 @@ module.exports = function (app) {
              const getOne = await Book.findById(bookid);
 
              if (!getOne) 
-             { return res.status(404).json({ error: 'no book found' }) };
+             { return res.status(404).json({ error: 'no book exists' }) };
 
             
             res.status(201).json(getOne);  
@@ -85,10 +85,9 @@ module.exports = function (app) {
           console.log(e.message);
           if (e.message.includes('Cast to ObjectId failed'))
           {console.log("fuck")
-            return res.status(404).json({ error: 'no book found' })
+            return res.status(404).json({ error: 'no book exists' })
           }
-          else {          res.status(500).json({message: e.message});  
-        }
+          else { res.status(500).json({message: e.message});      }
         }
       
 
@@ -110,8 +109,28 @@ module.exports = function (app) {
 
     //delete one book
     .delete(asyncHandler(async (req, res) =>{
-      let bookid = req.params.id;
+     // let bookid = req.body.id;
       //if successful response will be 'delete successful'
+
+      try {
+
+      const id = req.params.id;
+      const deleteOne = await Book.findByIdAndDelete(id);
+
+      if (!deleteOne)
+      { return res.status(404).json({ error: 'no book exists' }) };
+       res.status(201).json({message: 'delete successful'});
+      }
+
+      catch (e) {
+        console.log(e.message);
+          if (e.message.includes('Cast to ObjectId failed'))
+          {console.log("fuck")
+            return res.status(404).json({ error: 'no book found' })
+          }
+        res.status(500).json({message: e.message});  
+      }  
+
     }));
   
 };
