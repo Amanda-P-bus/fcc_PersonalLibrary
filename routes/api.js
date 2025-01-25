@@ -76,9 +76,7 @@ module.exports = function (app) {
 
              if (!getOne) 
              { return res.status(404).json({ error: 'no book found' }) };
-             
-             if (!bookid) 
-              { return res.status(404).json({ error: 'no book found' }) };
+
             
             res.status(201).json(getOne);  
          }
