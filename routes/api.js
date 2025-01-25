@@ -14,14 +14,26 @@ const asyncHandler = require('express-async-handler');
 module.exports = function (app) {
 
   app.route('/api/books')
+  //get all books
     .get(asyncHandler(async (req, res) => {
       //response will be array of book objects
       //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
-      let allBooks = [];
+      let allBooks = req.params.library;
          
       try {    
         //const showAll = await Book.find({}, 
+        /*
+          let filterResults = Object.assign(req.query);
+        filterResults["project"] = project;
+
+        const getResults = await Issue.find(filterResults);
+      res.status(201).json(getResults);
+      */
+      let filterResults = Object.assign(req.query);
+          filterResults["books"] = allBooks
           
+          const getBooks = await Book.find(filterResults);
+          res.status(201).json(getBooks);
          }
       
          catch (e) {
@@ -29,7 +41,7 @@ module.exports = function (app) {
           res.status(500).json({message: e.message});  }
          
     }))
-    
+ //add new book   
     .post(asyncHandler(async (req, res) => {
       let title = req.body.title;
 
@@ -42,11 +54,14 @@ module.exports = function (app) {
       }) 
  
       const addBook = await newBook.save();
-      res.status(201).json(addBook);
+      //return only id and book title
+      res.status(201).json({ _id: addBook.id, title: addBook.title });
+
      }
      catch (e) {
       console.log(e.message);
-      res.status(500).json({message: e.message});  }  
+      res.status(500).json({message: e.message});  
+    }  
       //response will contain new book object including at least _id and title
     }))
 
