@@ -94,7 +94,7 @@ module.exports = function (app) {
              const getOne = await Book.findById(bookid);
 
              if (!getOne) 
-             { return res.json("no book exists") };
+             { return res.status(201).json("no book exists") };
 
             
             res.status(201).json(getOne);  
@@ -104,7 +104,7 @@ module.exports = function (app) {
           console.log(e.message);
           if (e.message.includes("Cast to ObjectId failed"))
           {
-            return res.json("no book exists")
+            return res.status(201).json("no book exists")
           }
           else { res.status(500).json({message: e.message});      }
         }
@@ -114,55 +114,33 @@ module.exports = function (app) {
 
     //add comment function
     .post(asyncHandler(async (req, res) =>{
-    
+      let comment = req.body.comment;
+      let bookid = req.params.id;
       try {
-        let bookid = req.params.id;
-        let id = req.body._id;
-        let comment = req.body.comment;
+        let getNew = await Book.findByIdAndUpdate(	bookid, {$push: {comments: comment}}, {new: true});
 
-        const getOne = await Book.findById(bookid);
+        if (!getNew) {
+          res.status(201).json("no book exists")
+        }
 
-        let arrLength = getOne.comments.length;
+        if (!comment)
+          {res.status(201).json("missing required field comment")}
 
-        if (comment.length === 0 && getOne.comments.length === 0) 
-          { return res.json("mising required field comment") } 
 
-        else {
-          
-          const addComment = await Book.updateOne(
-            { _id: bookid }, 
-            { $push: { comments: comment } });
-          const updateCount = await Book.updateOne(
-            { _id: bookid },
-            { $set: { commentcount: arrLength } });
+       else {let counter = getNew.comments.length
+        let addTo = await Book.findByIdAndUpdate(	bookid, {$set: {commentcount: counter}}, {new: true});
 
-            //finds the book again to show all comments in the returned array
-            let findAgain = await Book.findById(bookid)
-
-              res.status(201).json({title: findAgain.title, _id: findAgain._id, comments: findAgain.comments, commentcount: findAgain.commentcount});
-            }//end else
-
+          res.json(addTo) }
+        
             }//end try
 
-      catch (e) {
-        let comment = req.body.comment;
-
-        console.log(e.message);
-        if (e.message.includes("Cannot set headers"))
-          {
-            return res.status(201).json("missing required field comment")}
-        
-        if (e.message.includes("Cannot read properties"))
-              {
-                return res.json("no book exists")}
-        
-        if (e.message.includes("Cast to ObjectId failed"))
-        {
-          return res.json("no book exists")
-        }
-        else { res.status(500).json({message: e.message});      }
-      }
-
+    catch (e) {
+          if (e.message.includes("Cast to"))
+          {res.status(500).json("no book exists")}
+          else {
+           res.status(500).json({message: e.message}); } 
+          }
+    
       //json res format same as .get
     }))
 
@@ -177,7 +155,7 @@ module.exports = function (app) {
       const deleteOne = await Book.findByIdAndDelete(id);
 
       if (!deleteOne)
-      { return res.json("no book exists") };
+      { return res.status(201).json("no book exists") };
        res.status(201).json("delete successful");
       }
 
