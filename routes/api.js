@@ -40,7 +40,7 @@ module.exports = function (app) {
       let title = req.body.title;
 
       if (!title)
-        { return res.status(201).json({error: "missing required field title"}) }
+        { return res.status(201).json("missing required field title") }
 
      try { 
       let newBook = new Book({
@@ -64,14 +64,13 @@ module.exports = function (app) {
       //if successful response will be "complete delete successful"
       try {
         const deleteAll = await Book.deleteMany({ library: "books" })
-//await Character.deleteMany({ name: /Stark/, age: { $gte: 18 } }); // returns {deletedCount: x} where x is the number of documents deleted.
 
         if (!deleteAll)
           { 
-            return res.status(201).json({ error: "no book exists" }) 
+            return res.status(201).json("no book exists") 
           };
         
-       res.status(201).json({message: "complete delete successful"});
+       res.status(201).json("complete delete successful");
        
       }
 
@@ -79,7 +78,7 @@ module.exports = function (app) {
         console.log(e.message);
         if (e.message.includes("Cast to ObjectId failed"))
           
-          {return res.status(201).json({ error: "no book found" }) }
+          {return res.json("no book found") }
         res.status(500).json({message: e.message});  
       }  
     }));
@@ -95,7 +94,7 @@ module.exports = function (app) {
              const getOne = await Book.findById(bookid);
 
              if (!getOne) 
-             { return res.status(201).json({ error: "no book exists" }) };
+             { return res.json("no book exists") };
 
             
             res.status(201).json(getOne);  
@@ -105,7 +104,7 @@ module.exports = function (app) {
           console.log(e.message);
           if (e.message.includes("Cast to ObjectId failed"))
           {
-            return res.status(201).json({ error: "no book exists" })
+            return res.json("no book exists")
           }
           else { res.status(500).json({message: e.message});      }
         }
@@ -126,7 +125,7 @@ module.exports = function (app) {
         let arrLength = getOne.comments.length;
 
         if (comment.length === 0 && getOne.comments.length === 0) 
-          { return res.status(201).json({ error: "mising required field comment" }) } 
+          { return res.json("mising required field comment") } 
 
         else {
           
@@ -151,15 +150,15 @@ module.exports = function (app) {
         console.log(e.message);
         if (e.message.includes("Cannot set headers"))
           {
-            return res.status(201).json({ error: "missing required field comment" })}
+            return res.status(201).json("missing required field comment")}
         
         if (e.message.includes("Cannot read properties"))
               {
-                return res.status(201).json({ error: "no book exists" })}
+                return res.json("no book exists")}
         
         if (e.message.includes("Cast to ObjectId failed"))
         {
-          return res.status(201).json({ error: "no book exists" })
+          return res.json("no book exists")
         }
         else { res.status(500).json({message: e.message});      }
       }
@@ -178,8 +177,8 @@ module.exports = function (app) {
       const deleteOne = await Book.findByIdAndDelete(id);
 
       if (!deleteOne)
-      { return res.status(201).json({ error: "no book exists" }) };
-       res.status(201).json({message: "delete successful"});
+      { return res.json("no book exists") };
+       res.status(201).json("delete successful");
       }
 
       catch (e) {
@@ -187,7 +186,7 @@ module.exports = function (app) {
 
         if (e.message.includes("Cast to ObjectId failed"))
           
-          {return res.status(201).json({ error: "no book found" }) }
+          {return res.status(201).json("no book found") }
 
         res.status(500).json({message: e.message});  
       }  
