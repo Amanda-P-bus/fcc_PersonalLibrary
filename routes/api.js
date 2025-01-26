@@ -117,8 +117,10 @@ module.exports = function (app) {
             { _id: bookid },
             { $set: { commentcount: arrLength } });
 
-              let resSuccess = "successfully updated";
-              res.status(201).json({result: resSuccess, _id: bookid});
+            //finds the book again to show all comments in the returned array
+            let findAgain = await Book.findById(bookid)
+
+              res.status(201).json({title: findAgain.title, _id: findAgain._id, comments: findAgain.comments, commentcount: findAgain.commentcount});
             }
           
 
